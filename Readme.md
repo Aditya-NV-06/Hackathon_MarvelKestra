@@ -14,3 +14,40 @@
 </li>
 </ul>
 
+##  Demo of the project
+
+## Tech Used in this project
+<ul>
+  <li>Kestra</li>
+  <li>Html</li>
+  <li>Tailwind CSS</li>
+  <li>Javascript</li>
+  <li>Nodejs</li>
+  <li>Docker</li>
+</ul>
+
+  ## Configure the project in the Local
+  
+  <h3>Clone the repo</h3>
+
+  ``` bash
+  git clone https://github.com/Aditya-NV-06/Hackathon_MarvelKestra
+  ```
+<h3>Install the packages</h3>
+
+``` bash
+npm install
+```
+<h3>Env to load</h3>
+
+``` bash
+PORT=<your_port_number>
+SITE_URL=<your_site_url>
+```
+<h3>Run the project</h3>
+
+``` bash
+npm run start
+```
+
+
