@@ -65,3 +65,11 @@ services:
     depends_on:
       postgres:
         condition: service_started
+
+  App:
+    context: .
+    dockerfile: Dockerfile
+    ports:
+      - "3000:3001"
+    depends_on:
+      - kestra
