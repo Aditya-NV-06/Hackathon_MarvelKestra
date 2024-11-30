@@ -49,5 +49,20 @@ SITE_URL=<your_site_url>
 ``` bash
 npm run start
 ```
+## Start Kestra 
+<h3>Change the permission</h3>
 
+``` bash
+chmod +x script.sh
+```
+<h3>Run the script</h3>
+
+``` bash
+.\script.sh
+```
+## Ngrok for the server url
+
+``` bash
+ngrok http 8080
+```
 
