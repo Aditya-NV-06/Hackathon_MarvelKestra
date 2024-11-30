@@ -1,8 +1,7 @@
-FROM node:latest
+FROM node:16
 
 WORKDIR /usr/src/app
 
-COPY src/ ./src
 COPY package*.json ./
 
 RUN npm install
@@ -15,4 +14,4 @@ COPY . .
 
 EXPOSE 3000
 
-CMD ["node", "app.js"]
+CMD ["npm", "test"]
