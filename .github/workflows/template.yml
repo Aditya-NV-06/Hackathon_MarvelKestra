@@ -1,0 +1,24 @@
+name: Template Workflow
+
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+        branches:
+            - main
+    issues:
+        types: [opened]
+    pull_request_target:
+        types: [opened]
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        steps:
+        - name: issue_comment
+          uses: ./ISSUE_TEMPLATE/issue_template.yml
+        
+        - name: pr_template
+          uses: ./Templates/pr_template.yml
