@@ -16,7 +16,8 @@
 
 ##  Demo of the project
 
-## Tech Used in this project
+
+### Tech Used in this project
 <ul>
   <li>Kestra</li>
   <li>Html</li>
@@ -26,41 +27,67 @@
   <li>Docker</li>
 </ul>
 
-  ## Configure the project in the Local
+### File structure
+``` bash
+.
+├── docker-compose.yaml
+├── Dockerfile
+├── index.js
+├── kestra
+│   └── flow
+│       ├── demo.yml
+│       ├── example.yml
+│       └── slack.yml
+├── node_modules
+│   └── mz
+│       └── index.js
+├── package.json
+├── package-lock.json
+├── postcss.config.js
+├── Readme.md
+├── script.sh
+├── src
+│   ├── app.js
+│   ├── index.html
+│   └── styles.css
+└── tailwind.config.js
+
+```
+  ### Configure the project in the Local
   
-  <h3>Clone the repo</h3>
+  <h4>Clone the repo</h4>
 
   ``` bash
   git clone https://github.com/Aditya-NV-06/Hackathon_MarvelKestra
   ```
-<h3>Install the packages</h3>
+<h4>Install the packages</h4>
 
 ``` bash
 npm install
 ```
-<h3>Env to load</h3>
+<h4>Env to load</h4>
 
 ``` bash
 PORT=<your_port_number>
 SITE_URL=<your_site_url>
 ```
-<h3>Run the project</h3>
+<h4>Run the project</h4>
 
 ``` bash
 npm run start
 ```
-## Start Kestra 
-<h3>Change the permission</h3>
+### Start Kestra 
+<h4>Change the permission</h4>
 
 ``` bash
 chmod +x script.sh
 ```
-<h3>Run the script</h3>
+<h4>Run the script</h4>
 
 ``` bash
 .\script.sh
 ```
-## Ngrok for the server url
+### Ngrok for the server url
 
 ``` bash
 ngrok http 8080
