@@ -1,0 +1,41 @@
+name: Greet First Time Contributors
+
+on:
+    pull_request_target:
+        types: [opened]
+
+jobs:
+    greet:
+        runs-on: ubuntu-latest
+
+        steps:
+        - name: first-time_contributor
+          id: check_contributor
+          uses: actions/github-script@v6
+          with:
+                script: |
+                    const { data: pullRequest } = await github.pulls.get({
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        pull_number: context.payload.pull_request.number,
+                    });
+
+                    const { data: issues } = await github.issues.listForRepo({
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        creator: pullRequest.user.login,
+                    });
+
+                    return issues.length === 1;
+
+        - name: Greet Contributor
+          if: steps.check_contributor.outputs.result == 'true'
+          uses: actions/github-script@v6
+          with:
+              script: |
+                  github.issues.createComment({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      issue_number: context.payload.pull_request.number,
+                      body: 'Thank you for your first contribution! We appreciate it!'
+                  });
