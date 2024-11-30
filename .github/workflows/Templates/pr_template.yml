@@ -1,0 +1,35 @@
+name: Pull Request Template
+
+on:
+    pull_request:
+        types: [opened, edited, reopened]
+
+jobs:
+    pr_template:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+                uses: actions/checkout@v2
+
+            - name: Set up PR template
+                run: |
+                    echo "## Description" > .github/pull_request_template.md
+                    echo "Please include a summary of the change and which issue is fixed. Please also include relevant motivation and context." >> .github/pull_request_template.md
+                    echo "" >> .github/pull_request_template.md
+                    echo "Fixes # (issue)" >> .github/pull_request_template.md
+                    echo "" >> .github/pull_request_template.md
+                    echo "## Type of change" >> .github/pull_request_template.md
+                    echo "Please delete options that are not relevant." >> .github/pull_request_template.md
+                    echo "- [ ] Bug fix (non-breaking change which fixes an issue)" >> .github/pull_request_template.md
+                    echo "- [ ] New feature (non-breaking change which adds functionality)" >> .github/pull_request_template.md
+                    echo "- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)" >> .github/pull_request_template.md
+                    echo "- [ ] This change requires a documentation update" >> .github/pull_request_template.md
+                    echo "" >> .github/ppull_request_template.md
+                    echo "## Checklist" >> .github/pull_request_template.md
+                    echo "- [ ] My code follows the style guidelines of this project" >> .github/pull_request_template.md
+                    echo "- [ ] I have performed a self-review of my own code" >> .github/pull_request_template.md
+                    echo "- [ ] I have commented my code, particularly in hard-to-understand areas" >> .github/pull_request_template.md
+                    echo "- [ ] I have made corresponding changes to the documentation" >> .github/pull_request_template.md
+                    echo "- [ ] My changes generate no new warnings" >> .github/pull_request_template.md
+                    echo "- [ ] Any dependent changes have been merged and published in downstream modules" >> .github/pull_request_template.md
+                    echo "- [ ] I have checked my code and corrected any misspellings" >> .github/pull_request_template.md
