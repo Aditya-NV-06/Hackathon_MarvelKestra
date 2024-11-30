@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Marvel App</title>
+    <!-- Chart.js script moved to the end of the body -->
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-image: url('background.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+        }
+        main {
+            flex: 1;
+            margin-top: 1rem;
+        }
+        #results {
+            transition: all 0.3s ease-in-out;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .character-card {
+            transition: transform 0.2s;
+        }
+        .character-card:hover {
+            transform: scale(1.05);
+        }
+        .fade-in {
+            animation: fadeIn 0.5s forwards;
+        }
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .carousel-item img {
+            width: 100%;
+            height: auto;
+            max-height: 300px;
+            object-fit: cover;
+        }
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #fff;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .card-game {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        .card {
+            background-color: #2d3748;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: scale(1.05);
+        }
+        .card.flipped {
+            background-color: #4a5568;
+        }
+        .win-message {
+            display: none;
+            text-align: center;
+            font-size: 2rem;
+            color: #fff;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+    <nav class="bg-gray-800 p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="#" class="text-white text-2xl font-bold">Marvel App</a>
+            <div class="relative w-full max-w-md hidden lg:block">
+                <div class="relative">
+                    <input type="text" id="search" class="p-2 pl-10 border border-gray-700 rounded-lg w-full transition duration-300 ease-in-out focus:ring-2 focus:ring-blue-500 focus:outline-none text-black" placeholder="Search for a character...">
+                    <button id="search-button" class="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition duration-300 ease-in-out focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </button>
+                    
+                </div>
+            </div>
+            <div class="block lg:hidden">
+                <button id="menu-button" class="text-white focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="hidden lg:flex space-x-4">
+                <a href="#" class="text-white hover:text-gray-400">Home</a>
+                <a href="#" class="text-white hover:text-gray-400">About</a>
+                <a href="#" class="text-white hover:text-gray-400">Contact</a>
+            </div>
+        </div>
+        <div id="menu" class="lg:hidden hidden">
+            <div class="relative w-full max-w-md mb-4">
+            <div class="relative">
+                <input type="text" id="search-mobile" class="p-2 pl-10 border border-gray-700 rounded-lg w-full transition duration-300 ease-in-out focus:ring-2 focus:ring-blue-500 focus:outline-none text-black" placeholder="Search for a character...">
+                <button id="search-button-mobile" class="absolute right-2 top-2 p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition duration-300 ease-in-out focus:ring-2 focus:ring-blue-500 focus:outline-none transform hover:scale-105">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </button>
+            </div>
+            <a href="#" class="block text-white p-2 hover:bg-gray-700">Home</a>
+            <a href="#" class="block text-white p-2 hover:bg-gray-700">About</a>
+            <a href="#" class="block text-white p-2 hover:bg-gray-700">Contact</a>
+        </div>
+    </nav>
+    
+    <div class="container mx-auto p-4 bg-gray-800 bg-opacity-75 rounded-lg shadow-lg">
+        <h1 class="text-4xl font-extrabold text-center mb-4">Marvel Character Search</h1>
+        <div id="loading" class="flex justify-center mt-4 hidden">
+            <div class="loading-spinner"></div>
+        </div>
+        <div id="results" class="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </div>
+    <div class="container mx-auto p-4 bg-gray-800 bg-opacity-75 rounded-lg shadow-lg mt-8">
+        <h2 class="text-3xl font-bold text-center mb-4">Add New Character</h2>
+        <div class="flex justify-center">
+            <div class="relative w-full max-w-md">
+                <input type="text" id="new-character" class="mt-4 p-4 pl-10 border border-gray-700 rounded-lg w-full transition duration-300 ease-in-out focus:ring-2 focus:ring-blue-500 focus:outline-none text-black" placeholder="Enter new character name...">
+                <button id="add-character-button" class="absolute right-2 top-2 mt-4 p-2 bg-green-600 text-white rounded-full hover:bg-green-700 transition duration-300 ease-in-out focus:ring-2 focus:ring-green-500 focus:outline-none transform hover:scale-105">
+                    Add
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="container mx-auto p-4 bg-gray-800 bg-opacity-75 rounded-lg shadow-lg mt-8">
+        <h2 class="text-3xl font-bold text-center mb-4">Characters</h2>
+        <table class="min-w-full bg-gray-900 text-white">
+            <thead>
+            <tr>
+                <th class="py-2 px-4 border-b border-gray-700">Rank</th>
+                <th class="py-2 px-4 border-b border-gray-700">Character</th>
+                <th class="py-2 px-4 border-b border-gray-700">Actions</th>
+            </tr>
+            </thead>
+            <tbody id="leaderboard">
+            <!-- Leaderboard entries will be dynamically inserted here -->
+            </tbody>
+        </table>
+    </div>
+    <div class="container mx-auto p-4 bg-gray-800 bg-opacity-75 rounded-lg shadow-lg mt-8">
+        <h2 class="text-3xl font-bold text-center mb-4">Card Game</h2>
+        <div id="card-game" class="card-game"></div>
+        <div id="win-message" class="win-message">You won! 🎉</div>
+    </div>
+    <footer class="bg-gray-800 p-4 mt-8">
+        <div class="container mx-auto text-center text-white">
+            &copy; Marvel  App. All rights reserved.
+        </div>
+    </footer>
+    <script src="./app.js" type="module"></script>
+    <script>
+        document.getElementById('search-button').addEventListener('click', function() {
+            const searchInput = document.getElementById('search').value;
+            const results = document.getElementById('results');
+            const loading = document.getElementById('loading');
+            if (!searchInput) {
+            showPopup('Please enter a character name.');
+            return;
+            }
+            results.classList.remove('fade-in');
+            results.innerHTML = '';
+            loading.classList.remove('hidden');
+
+        
+            setTimeout(() => {
+            loading.classList.add('hidden');
+            results.classList.add('fade-in');
+            results.innerHTML = `<div class="character-card bg-gray-700 p-4 rounded-lg shadow-lg">Character Result: ${searchInput}</div>`;
+            }, 2000);
+        });
+
+        document.getElementById('search-button-mobile').addEventListener('click', function() {
+            const searchInput = document.getElementById('search-mobile').value;
+            const results = document.getElementById('results');
+            const loading = document.getElementById('loading');
+            results.classList.remove('fade-in');
+            results.innerHTML = '';
+            loading.classList.remove('hidden');
+
+           
+            setTimeout(() => {
+                loading.classList.add('hidden');
+                results.classList.add('fade-in');
+                results.innerHTML = `<div class="character-card bg-gray-700 p-4 rounded-lg shadow-lg">Character Result: ${searchInput}</div>`;
+            }, 2000);
+        });
+
+        document.getElementById('menu-button').addEventListener('click', function() {
+            const menu = document.getElementById('menu');
+            menu.classList.toggle('hidden');
+        });
+
+        document.getElementById('add-character-button').addEventListener('click', function() {
+            const newCharacter = document.getElementById('new-character').value;
+            if (newCharacter) {
+                let characters = JSON.parse(localStorage.getItem('characters')) || [];
+                characters.push(newCharacter);
+                localStorage.setItem('characters', JSON.stringify(characters));
+                updateLeaderboard();
+                document.getElementById('new-character').value = '';
+            }
+        });
+
+        function updateLeaderboard() {
+            const leaderboard = document.getElementById('leaderboard');
+            const characters = JSON.parse(localStorage.getItem('characters')) || [];
+            leaderboard.innerHTML = '';
+            characters.forEach((character, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="py-2 px-4 border-b border-gray-700 text-center">${index + 1}</td>
+                    <td class="py-2 px-4 border-b border-gray-700 text-center">${character}</td>
+                    <td class="py-2 px-4 border-b border-gray-700 text-center">
+                        <button class="delete-character-button bg-red-600 text-white p-2 rounded-full hover:bg-red-700 transition duration-300 ease-in-out focus:ring-2 focus:ring-red-500 focus:outline-none transform hover:scale-105" data-index="${index}">
+                            Delete
+                        </button>
+                    </td>
+                `;
+                leaderboard.appendChild(row);
+            });
+
+            document.querySelectorAll('.delete-character-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const index = this.getAttribute('data-index');
+                    let characters = JSON.parse(localStorage.getItem('characters')) || [];
+                    characters.splice(index, 1);
+                    localStorage.setItem('characters', JSON.stringify(characters));
+                    updateLeaderboard();
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', updateLeaderboard);
+
+        // Card Game Logic
+        const cardGameContainer = document.getElementById('card-game');
+        const winMessage = document.getElementById('win-message');
+        const characters = ['Iron Man', 'Captain America', 'Thor', 'Hulk', 'Black Widow', 'Hawkeye'];
+        let cards = [...characters, ...characters];
+        let flippedCards = [];
+        let matchedCards = [];
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function createCard(character) {
+            const card = document.createElement('div');
+            card.classList.add('card');
+            card.dataset.character = character;
+            card.innerText = character;
+            card.addEventListener('click', flipCard);
+            return card;
+        }
+
+        function flipCard() {
+            if (flippedCards.length < 2 && !this.classList.contains('flipped')) {
+                this.classList.add('flipped');
+                flippedCards.push(this);
+
+                if (flippedCards.length === 2) {
+                    setTimeout(checkMatch, 1000);
+                }
+            }
+        }
+
+        function checkMatch() {
+            const [card1, card2] = flippedCards;
+            if (card1.dataset.character === card2.dataset.character) {
+                matchedCards.push(card1, card2);
+                card1.classList.add('matched');
+                card2.classList.add('matched');
+            } else {
+                card1.classList.remove('flipped');
+                card2.classList.remove('flipped');
+            }
+            flippedCards = [];
+            if (matchedCards.length === cards.length) {
+                winMessage.style.display = 'block';
+                setTimeout(() => {
+                    alert('You won!');
+                    initializeGame();
+                }, 500);
+            }
+        }
+
+        function initializeGame() {
+            shuffle(cards);
+            cardGameContainer.innerHTML = '';
+            cards.forEach(character => {
+                const card = createCard(character);
+                cardGameContainer.appendChild(card);
+            });
+            winMessage.style.display = 'none';
+            flippedCards = [];
+            matchedCards = [];
+        }
+
+        initializeGame();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>
+<div id="popup" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center hidden">
+    <div class="bg-gray-800 p-8 rounded-lg shadow-lg text-center">
+        <h2 id="popup-message" class="text-3xl font-bold mb-4"></h2>
+        <button id="popup-button" class="bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition duration-300 ease-in-out focus:ring-2 focus:ring-blue-500 focus:outline-none transform hover:scale-105">
+            OK
+        </button>
+    </div>
+</div>
+<script>
+    const popup = document.getElementById('popup');
+    const popupMessage = document.getElementById('popup-message');
+    const popupButton = document.getElementById('popup-button');
+    let gameStats = JSON.parse(localStorage.getItem('gameStats')) || { wins: 0, losses: 0 };
+
+    function showPopup(message) {
+        popupMessage.innerText = message;
+        popup.classList.remove('hidden');
+    }
+
+    popupButton.addEventListener('click', () => {
+        popup.classList.add('hidden');
+        initializeGame();
+    });
+
+    function checkMatch() {
+        const [card1, card2] = flippedCards;
+        if (card1.dataset.character === card2.dataset.character) {
+            matchedCards.push(card1, card2);
+            card1.classList.add('matched');
+            card2.classList.add('matched');
+        } else {
+            card1.classList.remove('flipped');
+            card2.classList.remove('flipped');
+        }
+        flippedCards = [];
+        if (matchedCards.length === cards.length) {
+            gameStats.wins++;
+            localStorage.setItem('gameStats', JSON.stringify(gameStats));
+            showPopup('You won! 🎉');
+        }
+    }
+
+    function initializeGame() {
+        shuffle(cards);
+        cardGameContainer.innerHTML = '';
+        cards.forEach(character => {
+            const card = createCard(character);
+            cardGameContainer.appendChild(card);
+        });
+        winMessage.style.display = 'none';
+        flippedCards = [];
+        matchedCards = [];
+    }
+
+    // Initialize game stats display
+    const statsContainer = document.createElement('div');
+    statsContainer.classList.add('container', 'mx-auto', 'p-4', 'bg-gray-800', 'bg-opacity-75', 'rounded-lg', 'shadow-lg', 'mt-8');
+    statsContainer.innerHTML = `
+        <h2 class="text-3xl font-bold text-center mb-4">Game Stats</h2>
+        <p class="text-center text-white">Wins: <span id="wins">${gameStats.wins}</span></p>
+        <p class="text-center text-white">Losses: <span id="losses">${gameStats.losses}</span></p>
+    `;
+    document.body.insertBefore(statsContainer, document.querySelector('footer'));
+
+    function updateStats() {
+        document.getElementById('wins').innerText = gameStats.wins;
+        document.getElementById('losses').innerText = gameStats.losses;
+    }
+
+    updateStats();
+const statsGraphContainer = document.createElement('div');
+statsGraphContainer.classList.add('container', 'mx-auto', 'p-4', 'bg-gray-800', 'bg-opacity-75', 'rounded-lg', 'shadow-lg', 'mt-8');
+statsGraphContainer.innerHTML = `
+    <h2 class="text-3xl font-bold text-center mb-4">Game Stats Graph</h2>
+    <canvas id="statsGraph" class="w-full h-64"></canvas>
+`;
+document.body.insertBefore(statsGraphContainer, document.querySelector('footer'));
+
+const ctx = document.getElementById('statsGraph').getContext('2d');
+const statsChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ['Wins', 'Losses'],
+        datasets: [{
+            label: 'Game Stats',
+            data: [gameStats.wins, gameStats.losses],
+            backgroundColor: ['#4caf50', '#f44336'],
+            borderColor: ['#388e3c', '#d32f2f'],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+function updateStats() {
+    document.getElementById('wins').innerText = gameStats.wins;
+    document.getElementById('losses').innerText = gameStats.losses;
+    statsChart.data.datasets[0].data = [gameStats.wins, gameStats.losses];
+    statsChart.update();
+}
+</script>

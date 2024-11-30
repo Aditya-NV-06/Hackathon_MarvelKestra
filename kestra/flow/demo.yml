@@ -1,0 +1,7 @@
+id: kestra_deploy
+namespace: company.team
+
+tasks:
+  - id: deploy_workflows
+    type: io.kestra.plugin.core.log.Log  # Corrected 'types' to 'type' and fixed casing
+    message: "Hello"  # Added a comma for better readability

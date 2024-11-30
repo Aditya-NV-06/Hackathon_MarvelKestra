@@ -1,0 +1,7 @@
+id: kestra_main
+namespace: company.team
+
+tasks:
+  - id: validate_workflows
+    type: io.kestra.plugin.core.log.Log  # Corrected 'types' to 'type' and fixed casing
+    message: "Hello, World"  # Added a comma for better readability

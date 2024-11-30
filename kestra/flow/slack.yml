@@ -1,0 +1,20 @@
+id: sucess_msg
+namespace: company.team
+
+tasks:
+  - id: send_alert
+    type: io.kestra.plugin.notifications.slack.SlackExecution
+    url: "{{ secret('SLACK_WEBHOOK') }}" # format: https://hooks.slack.com/services/xzy/xyz/xyz
+    channel: "#hackathon"
+    executionId: "{{trigger.executionId}}"
+
+triggers:
+  - id: sucess_prod_workflows
+    type: io.kestra.plugin.core.trigger.Flow
+    conditions:
+      - type: io.kestra.plugin.core.condition.ExecutionStatusCondition
+        in:
+          - SUCCESS
+      - type: io.kestra.plugin.core.condition.ExecutionNamespaceCondition
+        namespace: prod
+        prefix: true
