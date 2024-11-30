@@ -23,7 +23,7 @@ jobs:
         with:
           directory: ./kestra/flow
           resource: flow
-          server: http://127.0.0.1:8080
+          server: ${{ secrets.NgrokLink }}
           
       - name: Run a Multi-Line Script
         run: |
@@ -44,4 +44,4 @@ jobs:
           namespace: company.team  # Ensure this is correctly set for your organization/team
           directory: ./kestra/flow
           resource: flow
-          server: http://127.0.0.1:8080
+          server: ${{ secrets.NgrokLink }}
