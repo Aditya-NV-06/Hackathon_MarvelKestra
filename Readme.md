@@ -30,6 +30,8 @@
 ### File structure
 ``` bash
 .
+├── CODE_OF_CONDUCT.md
+├── CONTRIBUTING.md
 ├── docker-compose.yaml
 ├── Dockerfile
 ├── index.js
