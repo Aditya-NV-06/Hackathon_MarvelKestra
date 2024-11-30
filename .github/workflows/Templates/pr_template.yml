@@ -9,10 +9,10 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout repository
-                uses: actions/checkout@v2
+              uses: actions/checkout@v2
 
             - name: Set up PR template
-                run: |
+              run: |
                     echo "## Description" > .github/pull_request_template.md
                     echo "Please include a summary of the change and which issue is fixed. Please also include relevant motivation and context." >> .github/pull_request_template.md
                     echo "" >> .github/pull_request_template.md
