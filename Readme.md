@@ -54,6 +54,8 @@
 │   └── styles.css
 └── tailwind.config.js
 
+
+
 ```
   ### Configure the project in the Local
   
